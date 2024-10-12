@@ -1,7 +1,8 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Book, Star, Clock } from 'lucide-react';
-import { Module } from '../contexts/ModuleContext';
+import { Module } from '../types';
+import { motion } from 'framer-motion';
 
 interface ModuleCardProps {
   module: Module;
@@ -9,27 +10,32 @@ interface ModuleCardProps {
 
 const ModuleCard: React.FC<ModuleCardProps> = ({ module }) => {
   return (
-    <Link 
-      to={`/module/${module.id}`} 
-      className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition duration-300 transform hover:-translate-y-1 flex flex-col"
+    <motion.div
+      whileHover={{ scale: 1.05 }}
+      whileTap={{ scale: 0.95 }}
+      className="bg-white rounded-lg shadow-md overflow-hidden module-card"
     >
-      <div className="flex items-center mb-4">
-        <Book size={24} className="text-blue-500 mr-2" />
-        <h2 className="text-xl font-semibold flex-grow">{module.title}</h2>
-      </div>
-      <p className="text-gray-600 mb-4">{module.slides.length} slides</p>
-      <div className="flex items-center justify-between mt-auto">
-        <div className="flex items-center">
-          <Star size={16} className="text-yellow-400 mr-1" />
-          <span className="text-sm">4.5</span>
+      <Link to={`/module/${module.id}`} className="block h-full">
+        <div className="p-6">
+          <h3 className="text-xl font-semibold mb-2 text-gray-800">{module.title}</h3>
+          <div className="flex items-center text-sm text-gray-600 mb-4">
+            <Book size={16} className="mr-2" />
+            <span>{module.slides.length} slides</span>
+          </div>
+          <div className="flex justify-between items-center text-sm text-gray-500">
+            <div className="flex items-center">
+              <Star size={16} className="mr-1 text-yellow-400" />
+              <span>4.5</span>
+            </div>
+            <div className="flex items-center">
+              <Clock size={16} className="mr-1" />
+              <span>{new Date(module.updatedAt).toLocaleDateString()}</span>
+            </div>
+          </div>
         </div>
-        <div className="flex items-center">
-          <Clock size={16} className="text-gray-400 mr-1" />
-          <span className="text-sm">10 min</span>
-        </div>
-      </div>
-    </Link>
+      </Link>
+    </motion.div>
   );
 };
 
-export default ModuleCard;
+export default React.memo(ModuleCard);

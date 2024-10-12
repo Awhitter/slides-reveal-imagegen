@@ -1,8 +1,11 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { BookOpen, PlusCircle, User } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 const Header: React.FC = () => {
+  const location = useLocation();
+
   return (
     <header className="bg-indigo-600 text-white shadow-md sticky top-0 z-50">
       <div className="container mx-auto px-4 py-4 flex justify-between items-center">
@@ -13,18 +16,23 @@ const Header: React.FC = () => {
         <nav>
           <ul className="flex space-x-4 items-center">
             <li>
-              <Link to="/" className="hover:text-indigo-200 transition duration-300">Home</Link>
+              <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+                <Link
+                  to="/author"
+                  className={`bg-indigo-500 p-2 rounded-full hover:bg-indigo-400 transition duration-300 ${
+                    location.pathname === '/author' ? 'ring-2 ring-white' : ''
+                  }`}
+                >
+                  <PlusCircle size={20} />
+                </Link>
+              </motion.div>
             </li>
             <li>
-              <Link to="/author" className="flex items-center hover:text-indigo-200 transition duration-300">
-                <PlusCircle size={20} className="mr-1" />
-                Create Module
-              </Link>
-            </li>
-            <li>
-              <button className="bg-indigo-500 p-2 rounded-full hover:bg-indigo-400 transition duration-300">
-                <User size={20} />
-              </button>
+              <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+                <button className="bg-indigo-500 p-2 rounded-full hover:bg-indigo-400 transition duration-300">
+                  <User size={20} />
+                </button>
+              </motion.div>
             </li>
           </ul>
         </nav>
@@ -33,4 +41,4 @@ const Header: React.FC = () => {
   );
 };
 
-export default Header;
+export default React.memo(Header);

@@ -16,3 +16,9 @@ export interface Module {
   createdAt: Date;
   updatedAt: Date;
 }
+
+export type ModuleWithoutId = Omit<Module, 'id'>;
+export type SlideWithoutId = Omit<Slide, 'id'>;
+
+export type UpdateModule = Partial<Module>;
+export type UpdateSlide = Partial<Slide>;
