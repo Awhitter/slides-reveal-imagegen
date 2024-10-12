@@ -2,86 +2,29 @@
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
 
-@import 'reveal.js/dist/reveal.css';
-@import 'reveal.js/dist/theme/black.css';
-
-/* Custom styles */
-.reveal .slides section {
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
+@layer base {
+  body {
+    @apply bg-gray-50 text-gray-900;
+  }
 }
 
-.reveal h2 {
-  @apply text-4xl mb-4 text-indigo-600;
+@layer components {
+  .btn-primary {
+    @apply bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700 transition duration-300 disabled:opacity-50;
+  }
+
+  .btn-secondary {
+    @apply bg-gray-200 text-gray-800 px-4 py-2 rounded hover:bg-gray-300 transition duration-300;
+  }
+
+  .input-primary {
+    @apply mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50;
+  }
 }
 
-.reveal p {
-  @apply text-xl mb-4 text-gray-800;
-}
-
-.reveal img {
-  @apply max-h-[60vh] w-auto rounded-lg shadow-lg object-contain;
-}
-
-.reveal .slides section[data-background-image] {
-  background-size: cover;
-  background-position: center;
-}
-
-.reveal .slides section[data-background-image] .bg-black {
-  background-color: rgba(0, 0, 0, 0.5);
-}
-
-.reveal .slides section[data-background-image] * {
-  color: white;
-}
-
-.reveal .slides section .flex {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.reveal .slides section .flex-row-reverse {
-  flex-direction: row-reverse;
-}
-
-/* Set width to 50% for half-width elements */
-.reveal .slides section .w-1/2 {
-  width: 50%;
-}
-
-/* Additional custom styles */
-.module-card {
-  @apply transition-transform duration-300 ease-in-out hover:-translate-y-1 hover:shadow-lg;
-}
-
-.btn-primary {
-  @apply bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700 transition duration-300 disabled:opacity-50 disabled:cursor-not-allowed;
-}
-
-.btn-secondary {
-  @apply bg-gray-200 text-gray-800 px-6 py-3 rounded-lg hover:bg-gray-300 transition duration-300;
-}
-
-.input-primary {
-  @apply mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50;
-}
-
-.textarea-primary {
-  @apply mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50;
-}
-
-/* Ensure Reveal.js presentation takes up full screen */
-.reveal {
-  @apply absolute inset-0 !important;
-}
-
-.slides {
-  @apply h-full !important;
+/* Custom styles for rich text editor */
+.ql-editor {
+  min-height: 200px;
 }
 
 /* Animations */
@@ -92,22 +35,4 @@
 
 .animate-fadeIn {
   animation: fadeIn 0.5s ease-in-out;
-}
-
-@keyframes slideInFromLeft {
-  from { transform: translateX(-100%); }
-  to { transform: translateX(0); }
-}
-
-.animate-slideInFromLeft {
-  animation: slideInFromLeft 0.5s ease-in-out;
-}
-
-@keyframes slideInFromRight {
-  from { transform: translateX(100%); }
-  to { transform: translateX(0); }
-}
-
-.animate-slideInFromRight {
-  animation: slideInFromRight 0.5s ease-in-out;
 }
