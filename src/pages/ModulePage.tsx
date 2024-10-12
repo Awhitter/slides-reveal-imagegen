@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useModules, Slide as SlideType, Module } from '../contexts/ModuleContext';
-import { ArrowLeft, ArrowRight, Maximize, Minimize, Grid, Loader } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Maximize, Minimize, Grid, Loader, Edit3 } from 'lucide-react';
 import Reveal from 'reveal.js';
 import 'reveal.js/dist/reveal.css';
 import 'reveal.js/dist/theme/black.css';
@@ -151,6 +151,12 @@ const ModulePage: React.FC = () => {
     revealRef.current?.toggleOverview();
   };
 
+  const goToEditor = () => {
+    if (id) {
+      navigate(`/author/${id}`);
+    }
+  };
+
   if (isLoading) {
     return <div className="flex justify-center items-center h-screen"><Loader className="animate-spin" size={48} /></div>;
   }
@@ -173,13 +179,22 @@ const ModulePage: React.FC = () => {
   return (
     <div className="relative h-screen flex flex-col">
       <div className="bg-base-300 text-base-content p-4 flex justify-between items-center">
-        <button
-          onClick={() => navigate('/')}
-          className="btn btn-primary"
-        >
-          <ArrowLeft className="mr-2" size={20} />
-          Back to Home
-        </button>
+        <div className="flex space-x-2">
+          <button
+            onClick={() => navigate('/')}
+            className="btn btn-primary"
+          >
+            <ArrowLeft className="mr-2" size={20} />
+            Back to Home
+          </button>
+          <button
+            onClick={goToEditor}
+            className="btn btn-secondary"
+          >
+            <Edit3 className="mr-2" size={20} />
+            Go to Editor
+          </button>
+        </div>
         <h1 className="text-2xl font-bold">{module.title}</h1>
         <button
           onClick={toggleFullscreen}

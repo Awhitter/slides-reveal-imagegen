@@ -1,24 +1,27 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { BookOpen, PlusCircle, User, Home } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { BookOpen, PlusCircle, Home, Palette } from 'lucide-react';
 
-/**
- * Header component for the application
- * Displays the logo and navigation menu
- */
+const themes = ['light', 'dark', 'cupcake', 'corporate', 'synthwave'];
+
 const Header: React.FC = () => {
   const location = useLocation();
+  const [theme, setTheme] = useState<string>(
+    localStorage.getItem('theme') || 'dark'
+  );
 
-  // Memoize navItems to prevent unnecessary re-renders
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem('theme', theme);
+  }, [theme]);
+
   const navItems = useMemo(() => [
     { name: 'Home', path: '/', icon: <Home size={20} /> },
     { name: 'Create Module', path: '/author', icon: <PlusCircle size={20} /> },
-    // Add more nav items as needed
   ], []);
 
   return (
-    <header className="navbar bg-primary text-primary-content shadow-lg sticky top-0 z-50">
+    <header className="navbar bg-base-100 shadow-lg sticky top-0 z-50">
       <div className="container mx-auto px-4">
         <div className="flex-1">
           <Link to="/" className="btn btn-ghost normal-case text-xl">
@@ -33,9 +36,7 @@ const Header: React.FC = () => {
                 <Link
                   to={item.path}
                   className={`flex items-center space-x-1 ${
-                    location.pathname === item.path
-                      ? 'active'
-                      : ''
+                    location.pathname === item.path ? 'text-primary' : ''
                   }`}
                   aria-current={location.pathname === item.path ? 'page' : undefined}
                 >
@@ -45,11 +46,23 @@ const Header: React.FC = () => {
               </li>
             ))}
             <li>
-              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                <button className="btn btn-circle btn-ghost" aria-label="User profile">
-                  <User size={20} />
-                </button>
-              </motion.div>
+              <div className="dropdown dropdown-end">
+                <label tabIndex={0} className="btn btn-ghost btn-circle">
+                  <Palette size={20} />
+                </label>
+                <ul tabIndex={0} className="mt-3 p-2 shadow menu menu-compact dropdown-content bg-base-100 rounded-box w-52">
+                  {themes.map((t) => (
+                    <li key={t}>
+                      <a
+                        className={theme === t ? 'active' : ''}
+                        onClick={() => setTheme(t)}
+                      >
+                        {t.charAt(0).toUpperCase() + t.slice(1)}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
             </li>
           </ul>
         </nav>
@@ -58,5 +71,4 @@ const Header: React.FC = () => {
   );
 };
 
-// Memoize the entire component to prevent unnecessary re-renders
 export default React.memo(Header);

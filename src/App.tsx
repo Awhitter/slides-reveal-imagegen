@@ -12,12 +12,13 @@ const ModulePage = lazy(() => import('./pages/ModulePage'));
 
 const AppContent: React.FC = () => {
   const location = useLocation();
+  const isHomePage = location.pathname === '/';
   const isModulePage = location.pathname.startsWith('/module/');
 
   return (
-    <div className="flex flex-col min-h-screen bg-gray-100">
-      {!isModulePage && <Header />}
-      <main className="flex-grow container mx-auto px-4 py-8">
+    <div className={`flex flex-col min-h-screen ${isHomePage ? '' : 'bg-base-100'}`}>
+      {!isHomePage && !isModulePage && <Header />}
+      <main className={`flex-grow ${isHomePage ? 'h-screen' : ''}`}>
         <Suspense fallback={<LoadingSpinner />}>
           <Routes>
             <Route path="/" element={<HomePage />} />
@@ -26,7 +27,7 @@ const AppContent: React.FC = () => {
           </Routes>
         </Suspense>
       </main>
-      {!isModulePage && <Footer />}
+      {!isHomePage && !isModulePage && <Footer />}
     </div>
   );
 };
