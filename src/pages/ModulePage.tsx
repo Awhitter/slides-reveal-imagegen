@@ -192,7 +192,7 @@ const ModulePage: React.FC = () => {
             className="btn btn-secondary"
           >
             <Edit3 className="mr-2" size={20} />
-            Go to Editor
+            Edit Module
           </button>
         </div>
         <h1 className="text-2xl font-bold">{module.title}</h1>

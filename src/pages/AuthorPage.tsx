@@ -3,10 +3,11 @@ import { useNavigate } from 'react-router-dom';
 import { v4 as uuidv4 } from 'uuid';
 import { useModules, Slide, Module } from '../contexts/ModuleContext';
 import SlideEditor from '../components/SlideEditor';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Eye } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useImageGeneration } from '../hooks/useImageGeneration';
 import LoadingSpinner from '../components/LoadingSpinner';
+import ModulePreview from '../components/ModulePreview';
 
 /**
  * AuthorPage component for creating and editing modules
@@ -27,6 +28,7 @@ const AuthorPage: React.FC = () => {
   const [aiPrompt, setAiPrompt] = useState('');
   const [isAiLoading, setIsAiLoading] = useState(false);
   const [aiError, setAiError] = useState<string | null>(null);
+  const [isPreviewMode, setIsPreviewMode] = useState(false);
 
   const navigate = useNavigate();
   const { addModule } = useModules();
@@ -135,7 +137,7 @@ const AuthorPage: React.FC = () => {
 
   const stepIndicators = useMemo(() => (
     <div className="flex space-x-2">
-      {[1, 2].map((stepNumber) => (
+      {[1, 2, 3].map((stepNumber) => (
         <div
           key={stepNumber}
           className={`w-8 h-8 rounded-full flex items-center justify-center ${
@@ -148,20 +150,10 @@ const AuthorPage: React.FC = () => {
     </div>
   ), [step]);
 
-  return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.5 }}
-      className="max-w-4xl mx-auto px-4 py-8"
-    >
-      <h1 className="text-3xl font-bold mb-6 text-center">Create a Stunning Module</h1>
-      <div className="mb-8 flex justify-between items-center">
-        {stepIndicators}
-        <p className="text-base-content">Step {step} of 2</p>
-      </div>
-      <form onSubmit={handleSubmit} className="space-y-6">
-        {step === 1 && (
+  const renderStepContent = () => {
+    switch (step) {
+      case 1:
+        return (
           <motion.div
             initial={{ x: -20, opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
@@ -179,9 +171,9 @@ const AuthorPage: React.FC = () => {
               required
             />
           </motion.div>
-        )}
-
-        {step === 2 && (
+        );
+      case 2:
+        return (
           <motion.div
             initial={{ x: 20, opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
@@ -227,7 +219,37 @@ const AuthorPage: React.FC = () => {
               {aiError && <p className="text-error mt-2">{aiError}</p>}
             </div>
           </motion.div>
-        )}
+        );
+      case 3:
+        return (
+          <motion.div
+            initial={{ x: 20, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            transition={{ duration: 0.3 }}
+          >
+            <h2 className="text-xl font-semibold mb-4">Preview</h2>
+            <ModulePreview module={{ id: 'preview', title: moduleTitle, slides, createdAt: new Date(), updatedAt: new Date() }} />
+          </motion.div>
+        );
+      default:
+        return null;
+    }
+  };
+
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
+      className="max-w-4xl mx-auto px-4 py-8"
+    >
+      <h1 className="text-3xl font-bold mb-6 text-center">Create a Stunning Module</h1>
+      <div className="mb-8 flex justify-between items-center">
+        {stepIndicators}
+        <p className="text-base-content">Step {step} of 3</p>
+      </div>
+      <form onSubmit={handleSubmit} className="space-y-6">
+        {renderStepContent()}
 
         {error && (
           <div className="alert alert-error" role="alert">
@@ -247,7 +269,7 @@ const AuthorPage: React.FC = () => {
               Previous
             </button>
           )}
-          {step < 2 ? (
+          {step < 3 ? (
             <button
               type="button"
               onClick={() => setStep(step + 1)}
