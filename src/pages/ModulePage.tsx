@@ -108,8 +108,12 @@ const ModulePage: React.FC = () => {
     document.addEventListener('keydown', handleKeyDown);
     return () => {
       document.removeEventListener('keydown', handleKeyDown);
-      if (revealRef.current) {
-        revealRef.current.destroy();
+      if (revealRef.current && typeof revealRef.current.destroy === 'function') {
+        try {
+          revealRef.current.destroy();
+        } catch (error) {
+          console.error('Error destroying Reveal instance:', error);
+        }
         revealRef.current = null;
       }
     };
