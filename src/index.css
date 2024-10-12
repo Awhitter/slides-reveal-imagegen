@@ -46,7 +46,7 @@
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  @apply bg-base-400;
+  @apply bg-base-300;
 }
 
 /* Gradient text */
