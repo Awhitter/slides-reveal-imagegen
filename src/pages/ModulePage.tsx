@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useModules, Slide as SlideType, Module } from '../contexts/ModuleContext';
 import 'reveal.js/dist/reveal.css';
 import 'reveal.js/dist/theme/black.css';
-import { ArrowLeft, ArrowRight, Maximize, Minimize, Grid } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Maximize, Minimize, Grid, Loader } from 'lucide-react';
 import type { RevealStatic } from 'reveal.js';
 
 const Slide: React.FC<{ slide: SlideType; index: number }> = ({ slide, index }) => (
@@ -53,13 +53,21 @@ const ModulePage: React.FC = () => {
   const [module, setModule] = useState<Module | null>(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const deckRef = useRef<HTMLDivElement>(null);
   const revealRef = useRef<RevealStatic | null>(null);
 
   useEffect(() => {
+    setIsLoading(true);
+    setError(null);
     const fetchedModule = getModule(id);
     if (fetchedModule) {
       setModule(fetchedModule);
+      setIsLoading(false);
+    } else {
+      setError('Module not found');
+      setIsLoading(false);
     }
   }, [id, getModule]);
 
@@ -108,10 +116,18 @@ const ModulePage: React.FC = () => {
     };
   }, [module]);
 
-  if (!module) {
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <Loader className="animate-spin h-10 w-10 text-blue-500" />
+      </div>
+    );
+  }
+
+  if (error || !module) {
     return (
       <div className="text-center p-8">
-        <p className="text-red-500 mb-4">Module not found</p>
+        <p className="text-red-500 mb-4">{error || 'An error occurred'}</p>
         <button
           onClick={() => navigate('/')}
           className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition duration-300"
