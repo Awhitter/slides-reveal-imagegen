@@ -43,7 +43,8 @@ const ModulePage: React.FC = () => {
             embedded: false,
             transition: 'slide',
             progress: true,
-            controls: false,
+            controls: true, // Enable built-in controls
+            controlsTutorial: true,
             keyboard: true,
             center: true,
             touch: true,
@@ -59,6 +60,11 @@ const ModulePage: React.FC = () => {
             previewLinks: false,
             viewDistance: 3,
             mobileViewDistance: 2,
+            width: '100%',
+            height: '100%',
+            margin: 0.1,
+            minScale: 0.2,
+            maxScale: 2.0,
           });
 
           await revealRef.current.initialize();
@@ -129,7 +135,14 @@ const ModulePage: React.FC = () => {
             <section key={slide.id}>
               <h2>{slide.title}</h2>
               <div dangerouslySetInnerHTML={{ __html: slide.content }} />
-              {slide.imageUrl && <img src={slide.imageUrl} alt={`Slide ${index + 1} visual`} className="w-1/2 mx-auto" />}
+              {slide.imageUrl && (
+                <img 
+                  src={slide.imageUrl} 
+                  alt={`Slide ${index + 1} visual`} 
+                  className="w-1/2 mx-auto"
+                  style={{ maxHeight: '50vh', width: 'auto' }} // Limit image height
+                />
+              )}
             </section>
           ))}
         </div>
