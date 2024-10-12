@@ -1,21 +1,5 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
-
-export type SlideLayout = 'default' | 'image-left' | 'image-right' | 'image-background';
-
-export interface Slide {
-  id: string;
-  title: string;
-  content: string;
-  imageUrl: string;
-  imagePrompt: string;
-  layout: SlideLayout;
-}
-
-export interface Module {
-  id: string;
-  title: string;
-  slides: Slide[];
-}
+import { Module, Slide } from '../types';
 
 interface ModuleContextType {
   modules: Module[];
@@ -67,7 +51,7 @@ export const ModuleProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
   const updateModule = (updatedModule: Module): void => {
     setModules(prevModules => 
-      prevModules.map(module => module.id === updatedModule.id ? updatedModule : module)
+      prevModules.map(module => module.id === updatedModule.id ? { ...updatedModule, updatedAt: new Date() } : module)
     );
   };
 

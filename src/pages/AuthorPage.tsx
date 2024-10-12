@@ -5,13 +5,13 @@ import { useModules, Slide, Module } from '../contexts/ModuleContext';
 import SlideEditor from '../components/SlideEditor';
 import { AlertCircle, ChevronLeft, ChevronRight } from 'lucide-react';
 
-const TOGETHER_API_KEY = 'fc6b566a4270fd333ccffaf44ecd31860aea00c794cb138f08f5b845eafda9f4';
+const TOGETHER_API_KEY = import.meta.env.VITE_TOGETHER_API_KEY;
 const API_URL = 'https://api.together.xyz/v1/images/generations';
 
 const AuthorPage: React.FC = () => {
   const [step, setStep] = useState(1);
   const [moduleTitle, setModuleTitle] = useState('');
-  const [slides, setSlides] = useState<Slide[]>([{ id: uuidv4(), title: '', content: '', imageUrl: '', imagePrompt: '' }]);
+  const [slides, setSlides] = useState<Slide[]>([{ id: uuidv4(), title: '', content: '', imageUrl: '', imagePrompt: '', layout: 'default' }]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const navigate = useNavigate();
@@ -34,6 +34,8 @@ const AuthorPage: React.FC = () => {
         id: uuidv4(),
         title: moduleTitle,
         slides: slides,
+        createdAt: new Date(),
+        updatedAt: new Date(),
       };
       await addModule(newModule);
       navigate('/');
@@ -46,7 +48,10 @@ const AuthorPage: React.FC = () => {
   };
 
   const handleGenerateImage = async (slide: Slide) => {
-    if (!slide.imagePrompt) return;
+    if (!slide.imagePrompt) {
+      setError('Image prompt is required');
+      return;
+    }
     setIsLoading(true);
     setError('');
     try {
@@ -63,7 +68,10 @@ const AuthorPage: React.FC = () => {
         }),
       });
 
-      if (!response.ok) throw new Error('Failed to generate image');
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to generate image');
+      }
 
       const data = await response.json();
       if (data.data && data.data.length > 0 && data.data[0].url) {
@@ -72,7 +80,7 @@ const AuthorPage: React.FC = () => {
         throw new Error('No image URL in the response');
       }
     } catch (err) {
-      setError('Error generating image. Please try again.');
+      setError(`Error generating image: ${err instanceof Error ? err.message : 'Unknown error'}`);
       console.error('Error:', err);
     } finally {
       setIsLoading(false);
