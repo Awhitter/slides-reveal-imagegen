@@ -1,6 +1,7 @@
 import React from 'react';
 import { Slide, SlideLayout } from '../contexts/ModuleContext';
 import { Trash2, Image, ChevronUp, ChevronDown, Layout } from 'lucide-react';
+import RichTextEditor from './RichTextEditor';
 
 interface SlideEditorProps {
   slide: Slide;
@@ -78,12 +79,9 @@ const SlideEditor: React.FC<SlideEditorProps> = ({
         placeholder="Slide Title"
         className="mb-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
       />
-      <textarea
+      <RichTextEditor
         value={slide.content}
-        onChange={(e) => onUpdate({ ...slide, content: e.target.value })}
-        placeholder="Slide Content"
-        className="mb-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-        rows={3}
+        onChange={(content) => onUpdate({ ...slide, content })}
       />
       <div className="flex items-center mb-2">
         <input

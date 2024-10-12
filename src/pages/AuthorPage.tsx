@@ -88,7 +88,7 @@ const AuthorPage: React.FC = () => {
   };
 
   const addSlide = () => {
-    setSlides([...slides, { id: uuidv4(), title: '', content: '', imageUrl: '', imagePrompt: '' }]);
+    setSlides([...slides, { id: uuidv4(), title: '', content: '', imageUrl: '', imagePrompt: '', layout: 'default' }]);
   };
 
   const deleteSlide = (id: string) => {

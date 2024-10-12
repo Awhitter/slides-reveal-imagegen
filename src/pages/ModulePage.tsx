@@ -61,7 +61,7 @@ const ModulePage: React.FC = () => {
   useEffect(() => {
     setIsLoading(true);
     setError(null);
-    const fetchedModule = getModule(id);
+    const fetchedModule = id ? getModule(id) : null;
     if (fetchedModule) {
       setModule(fetchedModule);
       setIsLoading(false);
@@ -75,7 +75,8 @@ const ModulePage: React.FC = () => {
     if (module && deckRef.current && !revealRef.current) {
       import('reveal.js').then((RevealModule) => {
         const Reveal = RevealModule.default;
-        revealRef.current = new Reveal(deckRef.current, {
+        if (deckRef.current instanceof HTMLElement) {
+          revealRef.current = new Reveal(deckRef.current, {
           hash: true,
           embedded: false,
           transition: 'slide',
@@ -228,7 +229,6 @@ const ModulePage: React.FC = () => {
           autoSlide: 0,
           autoSlideStoppable: true,
           mouseWheel: false,
-          hideAddressBar: true,
           previewLinks: false,
           viewDistance: 3,
           width: '100%',
@@ -266,23 +266,6 @@ const ModulePage: React.FC = () => {
     );
   }
 
-  const handlePrevSlide = () => {
-    if (revealRef.current) {
-      revealRef.current.prev();
-    }
-  };
-
-  const handleNextSlide = () => {
-    if (revealRef.current) {
-      revealRef.current.next();
-    }
-  };
-
-  const handleOverview = () => {
-    if (revealRef.current) {
-      revealRef.current.toggleOverview();
-    }
-  };
 
   return (
     <div className="relative h-screen flex flex-col">
