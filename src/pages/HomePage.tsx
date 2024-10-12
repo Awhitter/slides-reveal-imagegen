@@ -13,8 +13,6 @@ import { useToast } from '@/components/ui/use-toast'
 export default function HomePage() {
   const { modules, loading, error } = useModules()
   const [backgroundImage, setBackgroundImage] = useState<string | null>(null)
-  const [showAIAssistant, setShowAIAssistant] = useState(false)
-  const [aiPrompt, setAiPrompt] = useState('')
   const { toast } = useToast()
   const { generateImage, isLoading, error: imageError } = useImageGeneration()
 
@@ -108,17 +106,13 @@ export default function HomePage() {
         <div className="container mx-auto px-4">
           <h2 className="text-3xl font-bold mb-8 text-center">AI Assistant</h2>
           <div className="flex justify-center mb-8">
-            <div className="flex w-full max-w-sm items-center space-x-2">
-              <Input
-                type="text"
-                placeholder="Ask AI to create something..."
-                value={aiPrompt}
-                onChange={(e) => setAiPrompt(e.target.value)}
-              />
-              <Button onClick={handleAIAssist}>Ask AI</Button>
-            </div>
+            <AIAssistant onSuggestion={(suggestion) => {
+              toast({
+                title: "AI Suggestion",
+                description: suggestion,
+              })
+            }} />
           </div>
-          {showAIAssistant && <AIAssistant prompt={aiPrompt} />}
         </div>
       </section>
 
