@@ -77,34 +77,35 @@ const ModulePage: React.FC = () => {
         const Reveal = RevealModule.default;
         if (deckRef.current instanceof HTMLElement) {
           revealRef.current = new Reveal(deckRef.current, {
-          hash: true,
-          embedded: false,
-          transition: 'slide',
-          progress: true,
-          controls: false,
-          controlsTutorial: false,
-          keyboard: true,
-          center: false,
-          touch: true,
-          loop: false,
-          rtl: false,
-          shuffle: false,
-          fragments: true,
-          showNotes: false,
-          autoSlide: 0,
-          autoSlideStoppable: true,
-          mouseWheel: false,
-          previewLinks: false,
-          viewDistance: 3,
-          width: '100%',
-          height: '100%',
-        });
-
-        revealRef.current.initialize().then(() => {
-          revealRef.current?.on('slidechanged', (event: any) => {
-            setCurrentSlide(event.indexh);
+            hash: true,
+            embedded: false,
+            transition: 'slide',
+            progress: true,
+            controls: false,
+            controlsTutorial: false,
+            keyboard: true,
+            center: false,
+            touch: true,
+            loop: false,
+            rtl: false,
+            shuffle: false,
+            fragments: true,
+            showNotes: false,
+            autoSlide: 0,
+            autoSlideStoppable: true,
+            mouseWheel: false,
+            previewLinks: false,
+            viewDistance: 3,
+            width: '100%',
+            height: '100%',
           });
-        });
+
+          revealRef.current.initialize().then(() => {
+            revealRef.current?.on('slidechanged', (event: any) => {
+              setCurrentSlide(event.indexh);
+            });
+          });
+        }
       });
     }
 
@@ -116,18 +117,35 @@ const ModulePage: React.FC = () => {
     };
   }, [module]);
 
+  const toggleFullscreen = () => {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen();
+    } else {
+      document.exitFullscreen();
+    }
+    setIsFullscreen(!isFullscreen);
+  };
+
+  const handlePrevSlide = () => {
+    revealRef.current?.prev();
+  };
+
+  const handleNextSlide = () => {
+    revealRef.current?.next();
+  };
+
+  const handleOverview = () => {
+    revealRef.current?.toggleOverview();
+  };
+
   if (isLoading) {
-    return (
-      <div className="flex items-center justify-center h-screen">
-        <Loader className="animate-spin h-10 w-10 text-blue-500" />
-      </div>
-    );
+    return <div className="flex justify-center items-center h-screen"><Loader className="animate-spin" size={48} /></div>;
   }
 
   if (error || !module) {
     return (
       <div className="text-center p-8">
-        <p className="text-red-500 mb-4">{error || 'An error occurred'}</p>
+        <p className="text-red-500 mb-4">{error || 'Module not found'}</p>
         <button
           onClick={() => navigate('/')}
           className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition duration-300"
@@ -138,18 +156,6 @@ const ModulePage: React.FC = () => {
       </div>
     );
   }
-
-  const toggleFullscreen = () => {
-    if (!document.fullscreenElement) {
-      document.documentElement.requestFullscreen();
-      setIsFullscreen(true);
-    } else {
-      if (document.exitFullscreen) {
-        document.exitFullscreen();
-        setIsFullscreen(false);
-      }
-    }
-  };
 
   return (
     <div className="relative h-screen flex flex-col">
@@ -180,20 +186,20 @@ const ModulePage: React.FC = () => {
       </div>
       <div className="bg-gray-800 p-4 flex justify-center items-center space-x-4">
         <button
-          onClick={() => revealRef.current?.prev()}
+          onClick={handlePrevSlide}
           className="bg-gray-700 text-white px-4 py-2 rounded hover:bg-gray-600 transition duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
           disabled={currentSlide === 0}
         >
           <ArrowLeft size={20} />
         </button>
         <button
-          onClick={() => revealRef.current?.toggleOverview()}
+          onClick={handleOverview}
           className="bg-gray-700 text-white px-4 py-2 rounded hover:bg-gray-600 transition duration-300"
         >
           <Grid size={20} />
         </button>
         <button
-          onClick={() => revealRef.current?.next()}
+          onClick={handleNextSlide}
           className="bg-gray-700 text-white px-4 py-2 rounded hover:bg-gray-600 transition duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
           disabled={currentSlide === module.slides.length - 1}
         >
