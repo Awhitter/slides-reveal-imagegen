@@ -3,8 +3,8 @@
 @import 'tailwindcss/utilities';
 
 @layer base {
-  body {
-    @apply bg-gray-50 text-gray-900;
+  html, body {
+    @apply bg-base-100 text-base-content;
   }
 }
 
@@ -29,4 +29,45 @@
 
 .animate-fadeIn {
   animation: fadeIn 0.5s ease-in-out;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-base-200;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-base-300;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-base-400;
+}
+
+/* Gradient text */
+.gradient-text {
+  @apply bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary;
+}
+
+/* Smooth transitions */
+.transition-all {
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 300ms;
+}
+
+/* Custom focus styles */
+*:focus {
+  @apply outline-primary;
+  outline-offset: 2px;
+}
+
+/* Overlay for background images */
+.bg-overlay {
+  @apply absolute inset-0 bg-black bg-opacity-40;
 }
