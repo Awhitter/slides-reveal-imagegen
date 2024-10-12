@@ -1,8 +1,9 @@
 import React, { useMemo, useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { BookOpen, PlusCircle, Home, Palette } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
-const themes = ['light', 'dark', 'cupcake', 'corporate', 'synthwave'];
+const themes = ['light', 'dark', 'cupcake', 'corporate', 'synthwave', 'retro', 'cyberpunk', 'valentine', 'halloween', 'garden', 'forest', 'aqua', 'lofi', 'pastel', 'fantasy', 'wireframe', 'black', 'luxury', 'dracula', 'cmyk', 'autumn', 'business', 'acid', 'lemonade', 'night', 'coffee', 'winter'];
 
 const Header: React.FC = () => {
   const location = useLocation();
