@@ -6,9 +6,6 @@ import Reveal from 'reveal.js';
 import 'reveal.js/dist/reveal.css';
 import 'reveal.js/dist/theme/black.css';
 
-/**
- * Slide component to render individual slides
- */
 const Slide: React.FC<{ slide: SlideType; index: number }> = ({ slide, index }) => (
   <section 
     className={`flex flex-col items-center justify-center h-full ${
