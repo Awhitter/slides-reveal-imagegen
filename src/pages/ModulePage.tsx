@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useModules, Slide as SlideType, Module } from '../contexts/ModuleContext';
 import 'reveal.js/dist/reveal.css';
 import 'reveal.js/dist/theme/black.css';
-import { ArrowLeft, ArrowRight, Maximize, Minimize } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Maximize, Minimize, Grid } from 'lucide-react';
 import type { RevealStatic } from 'reveal.js';
 
 const Slide: React.FC<{ slide: SlideType; index: number }> = ({ slide, index }) => (
@@ -162,52 +162,79 @@ const ModulePage: React.FC = () => {
           </div>
         </div>
       </div>
-      <div className="bg-gray-800 text-white p-4 flex justify-between items-center">
+      <div className="bg-gray-800 p-4 flex justify-center items-center space-x-4">
         <button
           onClick={() => revealRef.current?.prev()}
-          className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition duration-300"
+          className="bg-gray-700 text-white px-4 py-2 rounded hover:bg-gray-600 transition duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
           disabled={currentSlide === 0}
         >
-          <ArrowLeft className="inline-block mr-2" size={20} />
-          Previous
+          <ArrowLeft size={20} />
         </button>
-        <span>{`Slide ${currentSlide + 1} of ${module.slides.length}`}</span>
+        <button
+          onClick={() => revealRef.current?.toggleOverview()}
+          className="bg-gray-700 text-white px-4 py-2 rounded hover:bg-gray-600 transition duration-300"
+        >
+          <Grid size={20} />
+        </button>
         <button
           onClick={() => revealRef.current?.next()}
-          className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition duration-300"
+          className="bg-gray-700 text-white px-4 py-2 rounded hover:bg-gray-600 transition duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
           disabled={currentSlide === module.slides.length - 1}
         >
-          Next
-          <ArrowRight className="inline-block ml-2" size={20} />
+          <ArrowRight size={20} />
         </button>
+        <span className="text-white px-3 py-1 rounded ml-4">
+          {currentSlide + 1} / {module.slides.length}
+        </span>
       </div>
     </div>
   );
 };
-    if (node && module && !revealRef.current) {
-      revealRef.current = new Reveal(node, revealConfig);
-      revealRef.current.initialize().then(() => {
-        revealRef.current?.on('slidechanged', (event: any) => {
-          setCurrentSlide(event.indexh);
+
+  useEffect(() => {
+    if (module && deckRef.current && !revealRef.current) {
+      import('reveal.js').then((RevealModule) => {
+        const Reveal = RevealModule.default;
+        revealRef.current = new Reveal(deckRef.current, {
+          hash: true,
+          embedded: false,
+          transition: 'slide',
+          progress: true,
+          controls: false,
+          controlsTutorial: false,
+          keyboard: true,
+          center: false,
+          touch: true,
+          loop: false,
+          rtl: false,
+          shuffle: false,
+          fragments: true,
+          showNotes: false,
+          autoSlide: 0,
+          autoSlideStoppable: true,
+          mouseWheel: false,
+          hideAddressBar: true,
+          previewLinks: false,
+          viewDistance: 3,
+          width: '100%',
+          height: '100%',
+        });
+
+        revealRef.current.initialize().then(() => {
+          revealRef.current?.on('slidechanged', (event: any) => {
+            setCurrentSlide(event.indexh);
+          });
         });
       });
     }
-  }, [module]);
 
-  useEffect(() => {
-    document.addEventListener('keydown', handleKeyDown);
     return () => {
-      document.removeEventListener('keydown', handleKeyDown);
-      if (revealRef.current && typeof revealRef.current.destroy === 'function') {
-        try {
-          revealRef.current.destroy();
-        } catch (error) {
-          console.error('Error destroying Reveal instance:', error);
-        }
+      if (revealRef.current) {
+        revealRef.current.destroy();
         revealRef.current = null;
       }
     };
-  }, []);
+  }, [module]);
 
   if (!module) {
     return (
