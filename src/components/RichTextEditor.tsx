@@ -7,7 +7,15 @@ interface RichTextEditorProps {
   onChange: (content: string) => void;
 }
 
+/**
+ * RichTextEditor component
+ * Provides a rich text editing interface using ReactQuill
+ *
+ * @param {RichTextEditorProps} props - The props for the RichTextEditor component
+ * @returns {React.FC} A React functional component
+ */
 const RichTextEditor: React.FC<RichTextEditorProps> = ({ value, onChange }) => {
+  // Configuration for the Quill editor toolbar
   const modules = {
     toolbar: [
       [{ header: [1, 2, 3, false] }],
@@ -18,6 +26,7 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({ value, onChange }) => {
     ],
   };
 
+  // Allowed formats for the Quill editor
   const formats = [
     'header',
     'bold',
@@ -37,7 +46,7 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({ value, onChange }) => {
       onChange={onChange}
       modules={modules}
       formats={formats}
-      className="bg-white rounded shadow"
+      className="bg-base-100 rounded-box shadow-lg" // Updated to use daisyUI classes
     />
   );
 };

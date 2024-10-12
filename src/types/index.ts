@@ -1,12 +1,20 @@
 export type SlideLayout = 'default' | 'image-left' | 'image-right' | 'image-background';
 
+export interface MediaItem {
+  id: string;
+  source: string;
+  alt?: string;
+  type: 'image' | 'video';
+}
+
 export interface Slide {
   id: string;
   title: string;
   content: string;
-  imageUrl: string;
-  imagePrompt: string;
+  imageUrl?: string;
+  imagePrompt?: string;
   layout: SlideLayout;
+  media?: MediaItem[];
 }
 
 export interface Module {
