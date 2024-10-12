@@ -1,17 +1,13 @@
-import React, { useState, useEffect } from 'react'
+import React from 'react'
 import { Link } from 'react-router-dom'
 import { Plus } from 'lucide-react'
 import { motion } from 'framer-motion'
 import ModuleCard from '../components/ModuleCard'
-import { Module } from '../types'
 import LoadingSpinner from '../components/LoadingSpinner'
+import { useModules } from '../contexts/ModuleContext'
 
 export default function HomePage() {
   const { modules, loading, error } = useModules();
-
-  useEffect(() => {
-    // This effect is now empty as we're using the useModules hook
-  }, []);
 
   return (
     <div className="min-h-screen">
