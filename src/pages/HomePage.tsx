@@ -1,78 +1,97 @@
-import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { useModules } from '../contexts/ModuleContext';
-import { Plus, Search } from 'lucide-react';
-import ModuleCard from '../components/ModuleCard';
-import { motion } from 'framer-motion';
+import React, { useState, useEffect } from 'react'
+import { Link } from 'react-router-dom'
+import { Plus } from 'lucide-react'
+import { motion } from 'framer-motion'
+import ModuleCard from '../components/ModuleCard'
+import { Module } from '../types'
+import LoadingSpinner from '../components/LoadingSpinner'
 
-const HomePage: React.FC = () => {
-  const { modules } = useModules();
-  const [searchTerm, setSearchTerm] = useState('');
-  const [filteredModules, setFilteredModules] = useState(modules);
+export default function HomePage() {
+  const [modules, setModules] = useState<Module[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    setFilteredModules(
-      modules.filter(module =>
-        module.title.toLowerCase().includes(searchTerm.toLowerCase())
-      )
-    );
-  }, [modules, searchTerm]);
+    const fetchModules = async () => {
+      try {
+        const response = await fetch('/api/modules') // Adjust this URL to match your API endpoint
+        if (!response.ok) {
+          throw new Error('Failed to fetch modules')
+        }
+        const data = await response.json()
+        setModules(data)
+        setLoading(false)
+      } catch (err) {
+        setError('Failed to load modules. Please try again later.')
+        setLoading(false)
+      }
+    }
+
+    fetchModules()
+  }, [])
 
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.5 }}
-      className="container mx-auto px-4 py-8"
-    >
-      <section className="text-center mb-12">
-        <motion.h1
-          initial={{ y: -50 }}
-          animate={{ y: 0 }}
-          transition={{ type: "spring", stiffness: 100 }}
-          className="text-4xl font-bold mb-4"
+    <div className="min-h-screen">
+      <section className="relative w-full h-screen overflow-hidden">
+        <div 
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          style={{
+            backgroundImage: `url(https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80)`,
+          }}
         >
-          Welcome to AI-Powered E-Learning
-        </motion.h1>
-        <p className="text-xl mb-8">Discover a new way of learning with our interactive, AI-driven modules.</p>
-        <Link 
-          to="/author" 
-          className="btn-primary inline-flex items-center"
-        >
-          <Plus size={24} className="mr-2" />
-          Create New Module
-        </Link>
+          <div className="absolute inset-0 bg-black bg-opacity-60" />
+        </div>
+        <div className="relative z-10 h-full flex flex-col items-center justify-center text-center px-4">
+          <motion.h1
+            initial={{ y: -50, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ type: "spring", stiffness: 50 }}
+            className="text-5xl sm:text-6xl md:text-7xl font-bold mb-6 text-white"
+          >
+            AI-Powered E-Learning
+          </motion.h1>
+          <motion.p
+            initial={{ y: 50, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ type: "spring", stiffness: 50, delay: 0.2 }}
+            className="text-lg sm:text-xl mb-12 max-w-2xl text-gray-200"
+          >
+            Discover a new way of learning with our interactive, AI-driven modules.
+          </motion.p>
+          <motion.div
+            initial={{ scale: 0.8, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ type: "spring", stiffness: 50, delay: 0.4 }}
+          >
+            <Link 
+              to="/author" 
+              className="inline-flex items-center px-6 py-3 text-lg font-semibold rounded-full bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
+            >
+              <Plus className="mr-2 h-5 w-5" />
+              Create New Module
+            </Link>
+          </motion.div>
+        </div>
       </section>
 
-      <div className="mb-8">
-        <div className="relative">
-          <input
-            type="text"
-            placeholder="Search modules..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="input-primary pr-10"
-          />
-          <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+      <section className="py-16 bg-base-200">
+        <div className="container mx-auto px-4">
+          <h2 className="text-3xl font-bold mb-8 text-center">Featured Modules</h2>
+          {loading ? (
+            <div className="flex justify-center">
+              <LoadingSpinner />
+            </div>
+          ) : error ? (
+            <p className="text-center text-error">{error}</p>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {modules.map((module) => (
+                <ModuleCard key={module.id} module={module} />
+              ))}
+            </div>
+          )}
         </div>
-      </div>
-
-      {filteredModules.length === 0 ? (
-        <p className="text-center text-gray-600">No modules found. Try a different search term or create a new module!</p>
-      ) : (
-        <motion.div 
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ staggerChildren: 0.1 }}
-        >
-          {filteredModules.map((module) => (
-            <ModuleCard key={module.id} module={module} />
-          ))}
-        </motion.div>
-      )}
-    </motion.div>
-  );
-};
-
-export default HomePage;
+      </section>
+    </div>
+  )
+}
