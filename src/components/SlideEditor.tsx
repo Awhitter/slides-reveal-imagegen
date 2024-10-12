@@ -52,22 +52,23 @@ const SlideEditor: React.FC<SlideEditorProps> = React.memo(
     };
 
     return (
-      <div className="card bg-base-100 shadow-xl mb-6">
-        <div className="card-body">
-          <div className="flex items-center mb-4">
-            <h3 className="card-title flex-grow">Slide {slideNumber}</h3>
+      <div className="bg-base-100 rounded-lg shadow-md mb-6 overflow-hidden">
+        <div className="p-4">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-lg font-semibold">Slide {slideNumber}</h3>
             <div className="flex space-x-2">
               <button
                 onClick={() => setIsPreview(!isPreview)}
-                className="btn btn-sm btn-outline"
+                className="btn btn-sm btn-ghost"
+                aria-label={isPreview ? 'Edit' : 'Preview'}
               >
                 {isPreview ? <Edit3 size={16} /> : <Eye size={16} />}
-                {isPreview ? 'Edit' : 'Preview'}
               </button>
               <button
                 onClick={onMoveUp}
                 disabled={isFirst}
                 className="btn btn-sm btn-ghost"
+                aria-label="Move Up"
               >
                 <ChevronUp size={16} />
               </button>
@@ -75,12 +76,14 @@ const SlideEditor: React.FC<SlideEditorProps> = React.memo(
                 onClick={onMoveDown}
                 disabled={isLast}
                 className="btn btn-sm btn-ghost"
+                aria-label="Move Down"
               >
                 <ChevronDown size={16} />
               </button>
               <button
                 onClick={onDelete}
-                className="btn btn-sm btn-error"
+                className="btn btn-sm btn-ghost text-error"
+                aria-label="Delete Slide"
               >
                 <Trash2 size={16} />
               </button>
@@ -92,11 +95,11 @@ const SlideEditor: React.FC<SlideEditorProps> = React.memo(
           ) : (
             <>
               <div className="flex items-center mb-4">
-                <Layout size={20} className="mr-3 text-gray-600" />
+                <Layout size={16} className="mr-2 text-base-content opacity-70" />
                 <select
                   value={slide.layout}
                   onChange={handleLayoutChange}
-                  className="select select-bordered w-full"
+                  className="select select-sm select-bordered w-full max-w-xs"
                 >
                   <option value="default">Default</option>
                   <option value="image-left">Image Left</option>
@@ -115,21 +118,21 @@ const SlideEditor: React.FC<SlideEditorProps> = React.memo(
                 value={slide.content}
                 onChange={(content) => onUpdate({ ...slide, content })}
               />
-              <div className="flex items-center mb-4 mt-4">
+              <div className="flex items-center mt-4">
                 <input
                   type="text"
                   value={slide.imagePrompt}
                   onChange={(e) => onUpdate({ ...slide, imagePrompt: e.target.value })}
                   placeholder="Image Prompt"
-                  className="input input-bordered flex-grow mr-4"
+                  className="input input-bordered input-sm flex-grow mr-2"
                 />
                 <button
                   type="button"
                   onClick={onGenerateImage}
-                  className="btn btn-primary"
+                  className="btn btn-sm btn-primary"
                   disabled={isLoading || !slide.imagePrompt}
                 >
-                  <Image className="mr-2" size={20} />
+                  <Image className="mr-1" size={16} />
                   {isLoading ? 'Generating...' : 'Generate'}
                 </button>
               </div>

@@ -1,5 +1,5 @@
-import React, { useState, useMemo, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useCallback, useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import { v4 as uuidv4 } from 'uuid';
 import { useModules, Slide, Module } from '../contexts/ModuleContext';
 import SlideEditor from '../components/SlideEditor';
@@ -9,30 +9,40 @@ import { useImageGeneration } from '../hooks/useImageGeneration';
 import LoadingSpinner from '../components/LoadingSpinner';
 import ModulePreview from '../components/ModulePreview';
 
-/**
- * AuthorPage component for creating and editing modules
- */
 const AuthorPage: React.FC = () => {
+  const { id } = useParams<{ id?: string }>();
   const [step, setStep] = useState(1);
   const [moduleTitle, setModuleTitle] = useState('');
-  const [slides, setSlides] = useState<Slide[]>([
-    {
-      id: uuidv4(),
-      title: '',
-      content: '',
-      imageUrl: '',
-      imagePrompt: '',
-      layout: 'default',
-    },
-  ]);
-  const [aiPrompt, setAiPrompt] = useState('');
-  const [isAiLoading, setIsAiLoading] = useState(false);
-  const [aiError, setAiError] = useState<string | null>(null);
+  const [slides, setSlides] = useState<Slide[]>([]);
   const [isPreviewMode, setIsPreviewMode] = useState(false);
 
   const navigate = useNavigate();
-  const { addModule } = useModules();
+  const { addModule, getModule, updateModule } = useModules();
   const { generateImage, isLoading, error, setError } = useImageGeneration();
+
+  useEffect(() => {
+    if (id) {
+      const existingModule = getModule(id);
+      if (existingModule) {
+        setModuleTitle(existingModule.title);
+        setSlides(existingModule.slides);
+      } else {
+        setError('Module not found');
+        navigate('/');
+      }
+    } else {
+      setSlides([
+        {
+          id: uuidv4(),
+          title: '',
+          content: '',
+          imageUrl: '',
+          imagePrompt: '',
+          layout: 'default',
+        },
+      ]);
+    }
+  }, [id, getModule, setError, navigate]);
 
   const handleSubmit = useCallback(async (e: React.FormEvent) => {
     e.preventDefault();
@@ -45,20 +55,24 @@ const AuthorPage: React.FC = () => {
       return;
     }
     try {
-      const newModule: Module = {
-        id: uuidv4(),
+      const moduleData: Module = {
+        id: id || uuidv4(),
         title: moduleTitle,
         slides: slides,
-        createdAt: new Date(),
+        createdAt: id ? (getModule(id)?.createdAt || new Date()) : new Date(),
         updatedAt: new Date(),
       };
-      await addModule(newModule);
+      if (id) {
+        await updateModule(moduleData);
+      } else {
+        await addModule(moduleData);
+      }
       navigate('/');
     } catch (err) {
-      setError('Error creating module. Please try again.');
+      setError('Error saving module. Please try again.');
       console.error('Error:', err);
     }
-  }, [moduleTitle, slides, addModule, navigate, setError]);
+  }, [moduleTitle, slides, addModule, updateModule, navigate, setError, id, getModule]);
 
   const handleGenerateImage = useCallback(async (slide: Slide) => {
     const imageUrl = await generateImage(slide);
@@ -104,51 +118,6 @@ const AuthorPage: React.FC = () => {
       return updatedSlides;
     });
   }, []);
-
-  const handleGenerateSlides = async () => {
-    if (!aiPrompt) {
-      setAiError('Please enter a prompt.');
-      return;
-    }
-
-    setIsAiLoading(true);
-    setAiError(null);
-
-    try {
-      const response = await fetch('/api/generate-slides', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ prompt: aiPrompt }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to generate slides.');
-      }
-
-      const data = await response.json();
-      setSlides(data.slides);
-    } catch (err: any) {
-      console.error('AI Generation Error:', err);
-      setAiError(err.message);
-    } finally {
-      setIsAiLoading(false);
-    }
-  };
-
-  const stepIndicators = useMemo(() => (
-    <div className="flex space-x-2">
-      {[1, 2, 3].map((stepNumber) => (
-        <div
-          key={stepNumber}
-          className={`w-8 h-8 rounded-full flex items-center justify-center ${
-            step >= stepNumber ? 'bg-primary text-primary-content' : 'bg-base-200 text-base-content'
-          }`}
-        >
-          {stepNumber}
-        </div>
-      ))}
-    </div>
-  ), [step]);
 
   const renderStepContent = () => {
     switch (step) {
@@ -198,26 +167,6 @@ const AuthorPage: React.FC = () => {
             <button type="button" onClick={addSlide} className="btn btn-secondary mt-4">
               Add Slide
             </button>
-
-            <div className="mt-8 p-4 bg-base-200 rounded-lg">
-              <h3 className="text-lg font-semibold mb-2">AI Assistant</h3>
-              <textarea
-                value={aiPrompt}
-                onChange={(e) => setAiPrompt(e.target.value)}
-                placeholder="Enter a prompt for AI-generated slides..."
-                className="textarea textarea-bordered w-full mb-2"
-                rows={3}
-              />
-              <button
-                type="button"
-                onClick={handleGenerateSlides}
-                disabled={isAiLoading}
-                className="btn btn-primary"
-              >
-                {isAiLoading ? <LoadingSpinner size="sm" /> : 'Generate Slides'}
-              </button>
-              {aiError && <p className="text-error mt-2">{aiError}</p>}
-            </div>
           </motion.div>
         );
       case 3:
@@ -243,10 +192,19 @@ const AuthorPage: React.FC = () => {
       transition={{ duration: 0.5 }}
       className="max-w-4xl mx-auto px-4 py-8"
     >
-      <h1 className="text-3xl font-bold mb-6 text-center">Create a Stunning Module</h1>
+      <h1 className="text-3xl font-bold mb-6 text-center">{id ? 'Edit Module' : 'Create a New Module'}</h1>
       <div className="mb-8 flex justify-between items-center">
-        {stepIndicators}
-        <p className="text-base-content">Step {step} of 3</p>
+        <div className="flex space-x-2">
+          {[1, 2, 3].map((stepNumber) => (
+            <div
+              key={stepNumber}
+              className={`w-3 h-3 rounded-full ${
+                step >= stepNumber ? 'bg-primary' : 'bg-base-300'
+              }`}
+            />
+          ))}
+        </div>
+        <p className="text-sm text-base-content opacity-70">Step {step} of 3</p>
       </div>
       <form onSubmit={handleSubmit} className="space-y-6">
         {renderStepContent()}
@@ -263,9 +221,9 @@ const AuthorPage: React.FC = () => {
             <button
               type="button"
               onClick={() => setStep(step - 1)}
-              className="btn btn-outline"
+              className="btn btn-outline btn-sm"
             >
-              <ChevronLeft size={20} className="mr-1" />
+              <ChevronLeft size={16} className="mr-1" />
               Previous
             </button>
           )}
@@ -273,24 +231,24 @@ const AuthorPage: React.FC = () => {
             <button
               type="button"
               onClick={() => setStep(step + 1)}
-              className="btn btn-primary"
+              className="btn btn-primary btn-sm"
             >
               Next
-              <ChevronRight size={20} className="ml-1" />
+              <ChevronRight size={16} className="ml-1" />
             </button>
           ) : (
             <button
               type="submit"
-              className="btn btn-primary"
+              className="btn btn-primary btn-sm"
               disabled={isLoading}
             >
               {isLoading ? (
                 <>
-                  <LoadingSpinner size="sm" />
-                  Creating Module...
+                  <LoadingSpinner size="xs" />
+                  Saving...
                 </>
               ) : (
-                'Create Module'
+                'Save Module'
               )}
             </button>
           )}
