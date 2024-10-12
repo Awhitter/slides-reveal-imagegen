@@ -1,5 +1,7 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
-import { Module, Slide } from '../types';
+import { Module, Slide, SlideLayout } from '../types';
+
+export type { Module, Slide, SlideLayout };
 
 interface ModuleContextType {
   modules: Module[];
