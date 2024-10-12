@@ -1,0 +1,72 @@
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
+@import 'reveal.js/dist/reveal.css';
+@import 'reveal.js/dist/theme/black.css';
+
+/* Custom styles */
+.reveal .slides section {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.reveal h2 {
+  font-size: 2.5em;
+  margin-bottom: 0.5em;
+  color: #4F46E5;
+}
+
+.reveal p {
+  font-size: 1.5em;
+  margin-bottom: 1em;
+  color: #1F2937;
+}
+
+.reveal img {
+  max-height: 60vh;
+  width: auto;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+/* Additional custom styles */
+.module-card {
+  transition: transform 0.3s ease-in-out;
+}
+
+.module-card:hover {
+  transform: translateY(-5px);
+}
+
+.btn-primary {
+  @apply bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700 transition duration-300;
+}
+
+.btn-secondary {
+  @apply bg-gray-200 text-gray-800 px-6 py-3 rounded-lg hover:bg-gray-300 transition duration-300;
+}
+
+.input-primary {
+  @apply mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50;
+}
+
+.textarea-primary {
+  @apply mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50;
+}
+
+/* Ensure Reveal.js presentation takes up full screen */
+.reveal {
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.slides {
+  height: 100% !important;
+}
