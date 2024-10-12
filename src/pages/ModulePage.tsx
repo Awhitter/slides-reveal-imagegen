@@ -97,6 +97,13 @@ const ModulePage: React.FC = () => {
           viewDistance: 3,
           width: '100%',
           height: '100%',
+          margin: 0.04,
+          minScale: 0.2,
+          maxScale: 2.0,
+          display: 'flex',
+          navigationMode: 'default',
+          autoPlayMedia: null,
+          backgroundTransition: 'fade',
         });
 
         revealRef.current.initialize().then(() => {
@@ -174,8 +181,8 @@ const ModulePage: React.FC = () => {
         </button>
       </div>
       <div className="flex-1 overflow-hidden">
-        <div className="reveal h-full" ref={deckRef}>
-          <div className="slides">
+        <div className="reveal h-full w-full" ref={deckRef}>
+          <div className="slides h-full w-full">
             {module.slides.map((slide, index) => (
               <Slide key={slide.id} slide={slide} index={index} />
             ))}

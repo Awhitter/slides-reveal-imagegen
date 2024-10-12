@@ -23,7 +23,34 @@
 }
 
 .reveal img {
-  @apply max-h-[60vh] w-auto rounded-lg shadow-lg;
+  @apply max-h-[60vh] w-auto rounded-lg shadow-lg object-contain;
+}
+
+.reveal .slides section[data-background-image] {
+  background-size: cover;
+  background-position: center;
+}
+
+.reveal .slides section[data-background-image] .bg-black {
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.reveal .slides section[data-background-image] * {
+  color: white;
+}
+
+.reveal .slides section .flex {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.reveal .slides section .flex-row-reverse {
+  flex-direction: row-reverse;
+}
+
+.reveal .slides section .w-1\/2 {
+  width: 48%;
 }
 
 /* Additional custom styles */
