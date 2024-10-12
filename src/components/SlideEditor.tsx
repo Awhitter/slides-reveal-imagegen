@@ -1,6 +1,6 @@
 import React from 'react';
-import { Slide } from '../contexts/ModuleContext';
-import { Trash2, Image, ChevronUp, ChevronDown } from 'lucide-react';
+import { Slide, SlideLayout } from '../contexts/ModuleContext';
+import { Trash2, Image, ChevronUp, ChevronDown, Layout } from 'lucide-react';
 
 interface SlideEditorProps {
   slide: Slide;
@@ -27,6 +27,10 @@ const SlideEditor: React.FC<SlideEditorProps> = ({
   isFirst,
   isLast
 }) => {
+  const handleLayoutChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    onUpdate({ ...slide, layout: e.target.value as SlideLayout });
+  };
+
   return (
     <div className="border p-4 rounded mb-4 bg-white shadow-sm">
       <div className="flex items-center mb-2">
@@ -53,6 +57,19 @@ const SlideEditor: React.FC<SlideEditorProps> = ({
             <Trash2 size={20} />
           </button>
         </div>
+      </div>
+      <div className="flex items-center mb-2">
+        <Layout size={20} className="mr-2" />
+        <select
+          value={slide.layout}
+          onChange={handleLayoutChange}
+          className="flex-grow rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+        >
+          <option value="default">Default</option>
+          <option value="image-left">Image Left</option>
+          <option value="image-right">Image Right</option>
+          <option value="image-background">Image Background</option>
+        </select>
       </div>
       <input
         type="text"
