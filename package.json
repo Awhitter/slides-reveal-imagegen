@@ -10,6 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@radix-ui/react-toast": "^1.2.2",
     "@types/quill": "^2.0.14",
     "daisyui": "^4.12.13",
     "lucide-react": "^0.344.0",
