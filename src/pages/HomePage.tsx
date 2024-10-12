@@ -7,28 +7,11 @@ import { Module } from '../types'
 import LoadingSpinner from '../components/LoadingSpinner'
 
 export default function HomePage() {
-  const [modules, setModules] = useState<Module[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+  const { modules, loading, error } = useModules();
 
   useEffect(() => {
-    const fetchModules = async () => {
-      try {
-        const response = await fetch('/api/modules') // Adjust this URL to match your API endpoint
-        if (!response.ok) {
-          throw new Error('Failed to fetch modules')
-        }
-        const data = await response.json()
-        setModules(data)
-        setLoading(false)
-      } catch (err) {
-        setError('Failed to load modules. Please try again later.')
-        setLoading(false)
-      }
-    }
-
-    fetchModules()
-  }, [])
+    // This effect is now empty as we're using the useModules hook
+  }, []);
 
   return (
     <div className="min-h-screen">

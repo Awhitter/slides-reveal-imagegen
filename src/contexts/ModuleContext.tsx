@@ -5,6 +5,8 @@ export type { Module, Slide, SlideLayout };
 
 interface ModuleContextType {
   modules: Module[];
+  loading: boolean;
+  error: string | null;
   addModule: (module: Module) => Promise<void>;
   getModule: (id: string) => Module | undefined;
   updateModule: (module: Module) => void;
@@ -23,16 +25,23 @@ export const useModules = () => {
 
 export const ModuleProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [modules, setModules] = useState<Module[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchModules = () => {
+    const fetchModules = async () => {
       try {
+        setLoading(true);
+        setError(null);
         const storedModules = localStorage.getItem('modules');
         if (storedModules) {
           setModules(JSON.parse(storedModules));
         }
+        setLoading(false);
       } catch (error) {
         console.error('Error fetching modules:', error);
+        setError('Failed to load modules. Please try again later.');
+        setLoading(false);
       }
     };
 
@@ -62,7 +71,7 @@ export const ModuleProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   };
 
   return (
-    <ModuleContext.Provider value={{ modules, addModule, getModule, updateModule, deleteModule }}>
+    <ModuleContext.Provider value={{ modules, loading, error, addModule, getModule, updateModule, deleteModule }}>
       {children}
     </ModuleContext.Provider>
   );
