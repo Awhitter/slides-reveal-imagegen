@@ -77,13 +77,13 @@ const ModulePage: React.FC = () => {
         const Reveal = RevealModule.default;
         revealRef.current = new Reveal(deckRef.current, {
           hash: true,
-          embedded: false,
+          embedded: true,
           transition: 'slide',
-          progress: true,
+          progress: false,
           controls: false,
           controlsTutorial: false,
           keyboard: true,
-          center: false,
+          center: true,
           touch: true,
           loop: false,
           rtl: false,
