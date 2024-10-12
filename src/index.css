@@ -49,6 +49,7 @@
   flex-direction: row-reverse;
 }
 
+/* Set width to 48% for half-width elements */
 .reveal .slides section .w-1/2 {
   width: 48%;
 }
